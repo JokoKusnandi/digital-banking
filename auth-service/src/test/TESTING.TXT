@@ -1,0 +1,26 @@
+{
+    "email": "rita@example.com",
+    "password": "admin1234565432",
+    "fullName": "Rita Susanti",
+    "phoneNumber": "081356567892"
+}
+
+{
+    "email": "joko@example.com",
+    "password": "Password123!",
+    "fullName": "Joko Kusnandi",
+    "phoneNumber": "081234567891"
+}
+
+{
+    "email": "admin@mail.com",
+    "password": "admin1234565432",
+    "fullName": "admin",
+    "phoneNumber": "081234567891"
+}
+
+//login
+{
+    "email": "superadmin@bank.com",
+    "password": "Admin123!"
+}

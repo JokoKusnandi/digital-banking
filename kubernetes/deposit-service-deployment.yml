@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deposit-service
+  labels:
+    app: deposit-service
+  spec:
+    replicas: 2
+    selector:
+      matchLabels:
+        app: deposit-service
+      spec:
+        containers:
+          - name: deposit-service
+            image: banking/deposit-service:latest
+            ports:
+              - containerPort : 8083
+            env : 
+             - name : SPRING_DATASOURCE_URL
+               value: jdbc:postgresql://postgres:5432/deposit_db
+             - name : SPRING_KAFKA_BOOTSTRAP_SERVERS
+               value: kafka:9092
+             - name : SPRING_DATA_REDIS_HOST
+               value: redis
+            resources:
+              requests:
+                memory: "512Mi"
+                cpu: "250m"
+              limits:
+                memory: "1Gi"
+                cpu: "500m"
+
+---
+apiVersion: v1
+kind : Service
+metadata: 
+  name: deposit-service
+spec:
+  selector:
+    app: deposit-service
+  ports:
+    -port : 8083
+    targetPort: 8083
+  type: ClusterIP

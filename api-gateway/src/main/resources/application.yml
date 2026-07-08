@@ -1,0 +1,35 @@
+server:
+    port: 8080
+
+spring:
+    application:
+        name: api-gateway
+    cloud:
+        gateway:
+            routes:
+                -   id : auth-service
+                    uri : http://localhost:8081
+                    predicates:
+                     - Path=/api/v1/auth/user/**
+                -  id : account-service
+                   uri : http://localhost:8082
+                   predicates:
+                    - Path=/api/accounts/**
+                -  id : deposit-service
+                   uri : http://localhost:8083
+                   predicates:
+                    - Path=/api/deposits/**
+                -  id : transfer-service
+                   uri : http://localhost:8084
+                   predicates:
+                    - Path=/api/transfers/**
+                -  id : biller-service
+                   uri : http://localhost:8085
+                   predicates:
+                    - Path=/api/billers/**
+            globalcors:
+                cors-configuratiions:
+                    "[/**]":
+                        allowedOrigins: "*"
+                        allowedMethods: "*"
+                        allowedHeaders: "*"

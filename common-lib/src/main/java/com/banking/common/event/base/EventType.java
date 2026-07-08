@@ -1,0 +1,25 @@
+package com.banking.common.event.base;
+
+public enum EventType {
+
+    CUSTOMER_CREATED,
+    CUSTOMER_UPDATED,
+    CUSTOMER_DELETED,
+
+    ACCOUNT_CREATED,
+    ACCOUNT_UPDATED,
+    ACCOUNT_BLOCKED,
+
+    TRANSACTION_CREATED,
+
+    TRANSFER_CREATED,
+    TRANSFER_COMPLETED,
+
+    PAYMENT_CREATED,
+    PAYMENT_COMPLETED,
+
+    NOTIFICATION,
+
+    AUDIT
+
+}

@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-service
+  labels:
+    app: user-service
+  spec:
+    replicas: 2
+    selector:
+      matchLabels:
+        app: user-service
+      spec:
+        containers:
+          - name: user-service
+            image: banking/user-service:latest
+            ports:
+              - containerPort : 8081
+            env : 
+             - name : SPRING_DATASOURCE_URL
+               value: jdbc:postgresql://postgres:5432/user_db
+             - name : SPRING_KAFKA_BOOTSTRAP_SERVERS
+               value: kafka:9092
+             - name : SPRING_DATA_REDIS_HOST
+               value: redis
+            resources:
+              requests:
+                memory: "512Mi"
+                cpu: "250m"
+              limits:
+                memory: "1Gi"
+                cpu: "500m"
+
+---
+apiVersion: v1
+kind : Service
+metadata: 
+  name: user-service
+spec:
+  selector:
+    app: user-service
+  ports:
+    -port : 8081
+    targetPort: 8081
+  type: ClusterIP

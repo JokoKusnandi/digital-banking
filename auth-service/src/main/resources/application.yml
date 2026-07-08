@@ -1,0 +1,56 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: auth-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres?currentSchema=user_db
+    username: postgres
+    password: G0C0d1ng2023
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        default_schema: user_db
+
+  flyway:
+    enabled: true
+
+  kafka:
+    bootstrap-servers: localhost:9092
+
+  data:
+    redis:
+      host: localhost
+      port: 6372
+
+#eureka:
+#  client:
+#    service-url:
+#      defaultZone: http://localhost:8761/eureka/
+
+security:
+  jwt:
+    issuer: DIGITAL-BANK
+    audience: DIGITAL-BANK-CLIENT
+    secret: 2a0d9d6f0d9c7be46b79e4a0a1e6b9b57d77df9cb88f56efbe889d77fd17efcb
+    access-expiration: 900
+    refresh-expiration: 604800
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+
+logging:
+  app:
+    enabled: true
+    request-body: false
+    response-body: false

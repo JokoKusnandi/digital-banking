@@ -1,0 +1,139 @@
+version : '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: G0C0d1ng2023
+      POSTGRES_DB: banking_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - banking-network
+
+  redis:
+    image: redis:7-apline
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - banking-network
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.6.1
+    
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+    networks:
+      - banking-network
+
+  kafka:
+    image: confluentinc/cp-kafka:7.6.1
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    ports:
+      - "9092:9092"
+    networks:
+      - banking-network
+  auth-service:
+    build: ./auth-service
+    ports:
+     - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/user_db
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      SPRING_DATA_REDIS_HOST: redis
+    depends_on:
+     - postgres
+     - redis
+     - kafka
+    networks:
+     - banking-network
+  account-service:
+    build: ./account-service
+    ports:
+     - "8082:8082"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/account_db
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      SPRING_DATA_REDIS_HOST: redis
+    depends_on:
+     - postgres
+     - redis
+     - kafka
+    networks:
+     - banking-network
+  deposit-service:
+    build: ./deposit-service
+    ports:
+     - "8083:8083"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/deposit_db
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      SPRING_DATA_REDIS_HOST: redis
+    depends_on:
+     - postgres
+     - redis
+     - kafka
+    networks:
+     - banking-network
+  transfer-service:
+    build: ./transfer-service
+    ports:
+     - "8084:8084"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/transfer_db
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      SPRING_DATA_REDIS_HOST: redis
+    depends_on:
+     - postgres
+     - redis
+     - kafka
+    networks:
+     - banking-network
+  biller-service:
+    build: ./biller-service
+    ports:
+     - "8085:8085"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/biller_db
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      SPRING_DATA_REDIS_HOST: redis
+    depends_on:
+     - postgres
+     - redis
+     - kafka
+    networks:
+     - banking-network
+  api-gateway:
+    build: ./api-gateway
+    ports:
+     - "8080:8080"
+    depends_on:
+     - auth-service
+     - account-service
+     - deposit-service
+     - transfer-service
+     - biller-service
+    networks:
+     - banking-network
+    
+volumes:
+  postgres_data:
+  redis_data:
+networks:
+  banking-network:
+    driver: bridge

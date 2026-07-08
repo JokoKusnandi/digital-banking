@@ -1,0 +1,27 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: account-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/account_db
+    username: postgres
+    password: G0C0d1ng2023
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  kafka:
+    bootstrap-servers: localhost:9092
+  data:
+    redis:
+      host: localhost
+      port: 6372
+jwt:
+  secret: your-secret-key-here-change-in-production
+  expiration: 86400000

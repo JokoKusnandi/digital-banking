@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: biller-service
+  labels:
+    app: biller-service
+  spec:
+    replicas: 2
+    selector:
+      matchLabels:
+        app: biller-service
+      spec:
+        containers:
+          - name: biller-service
+            image: banking/biller-service:latest
+            ports:
+              - containerPort : 8085
+            env : 
+             - name : SPRING_DATASOURCE_URL
+               value: jdbc:postgresql://postgres:5432/biller_db
+             - name : SPRING_KAFKA_BOOTSTRAP_SERVERS
+               value: kafka:9092
+             - name : SPRING_DATA_REDIS_HOST
+               value: redis
+            resources:
+              requests:
+                memory: "512Mi"
+                cpu: "250m"
+              limits:
+                memory: "1Gi"
+                cpu: "500m"
+
+---
+apiVersion: v1
+kind : Service
+metadata: 
+  name: biller-service
+spec:
+  selector:
+    app: biller-service
+  ports:
+    -port : 8085
+    targetPort: 8085
+  type: ClusterIP
